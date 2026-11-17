@@ -16,12 +16,18 @@ import com.pico.spatial.core.ecs.TransformComponent
 import com.pico.spatial.core.math.EulerAngles
 import com.pico.spatial.core.math.Vector3
 import com.example.demo.R
+import com.example.demo.scene.buildLushanMorning
 import com.pico.spatial.ui.design.PicoTheme
 import com.pico.spatial.ui.design.Text
 import com.pico.spatial.ui.foundation.content.SpatialView
 
 @Composable
 fun HomePage() {
-    // Add your own Spatial content here
-
+    // 先把它放在窗口里看效果；后续换成 Stage 沉浸态
+    SpatialView(
+        modifier = Modifier.fillMaxSize(),
+        initial = { content, _ ->
+            buildLushanMorning(content, scale = 0.035f)
+        }
+    )
 }
