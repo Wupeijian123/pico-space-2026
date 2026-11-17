@@ -56,6 +56,13 @@ fun ScrollPage() {
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val poem = lushanPoem
 
+    // 启动时把注释窗与赏析窗一并打开：一是让用户一眼看到多窗口，
+    // 二是演示/评审时的 30 秒脚本从这里开始
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        nav.openWindowContainer("notes", "lushan", Bundle())
+        nav.openWindowContainer("commentary", "lushan", Bundle())
+    }
+
     Box(modifier = Modifier.fillMaxSize().background(Paper)) {
         Row(modifier = Modifier.fillMaxSize().padding(40.dp)) {
             // 左：题签
