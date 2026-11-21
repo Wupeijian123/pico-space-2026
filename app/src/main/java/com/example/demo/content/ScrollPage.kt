@@ -1,5 +1,6 @@
 package com.example.demo.content
 
+import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,14 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pico.spatial.ui.design.Text
-import kotlinx.coroutines.launch
 import com.pico.spatial.ui.platform.containers.LocalSpatialNavigator
 import com.pico.spatial.ui.platform.containers.StageStyle
-import android.os.Bundle
+import kotlinx.coroutines.launch
 
 // 文人墨客配色：宣纸 / 墨 / 朱砂 / 淡墨
 val Paper = Color(0xFFF2EADA)
@@ -39,72 +39,116 @@ private val sealShape = RoundedCornerShape(6.dp)
 private fun SealButton(label: String, onClick: () -> Unit) {
     Box(
         modifier =
-            Modifier.width(96.dp)
-                .height(44.dp)
+            Modifier.width(88.dp)
+                .height(40.dp)
                 .background(Color(0x14A8322D), sealShape)
                 .border(1.5.dp, Cinnabar, sealShape)
                 .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text(text = label, fontSize = 16.sp, color = Cinnabar, letterSpacing = 3.sp)
+        Text(text = label, fontSize = 15.sp, color = Cinnabar, letterSpacing = 3.sp)
     }
 }
 
+/**
+ * 书房态主窗：一卷三栏。
+ * 左为题签，中为正文，右为注释与赏析——像一幅展开的批注本。
+ */
 @Composable
 fun ScrollPage() {
     val nav = LocalSpatialNavigator.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val poem = lushanPoem
 
-    // 启动时把注释窗与赏析窗一并打开：一是让用户一眼看到多窗口，
-    // 二是演示/评审时的 30 秒脚本从这里开始
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        nav.openWindowContainer("notes", "lushan", Bundle())
-        nav.openWindowContainer("commentary", "lushan", Bundle())
-    }
-
     Box(modifier = Modifier.fillMaxSize().background(Paper)) {
-        Row(modifier = Modifier.fillMaxSize().padding(40.dp)) {
-            // 左：题签
+        Row(modifier = Modifier.fillMaxSize().padding(horizontal = 34.dp, vertical = 28.dp)) {
+
+            // ── 左：题签 ──
             Column(
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier.width(184.dp).fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = poem.title, fontSize = 26.sp, color = Ink, letterSpacing = 3.sp)
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(text = "${poem.dynasty} · ${poem.author}", fontSize = 14.sp, color = InkFaint, letterSpacing = 2.sp)
-                Spacer(modifier = Modifier.height(22.dp))
+                Text(text = poem.title, fontSize = 25.sp, color = Ink, letterSpacing = 3.sp)
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "${poem.dynasty} · ${poem.author}",
+                    fontSize = 13.sp,
+                    color = InkFaint,
+                    letterSpacing = 2.sp
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 Box(
-                    modifier =
-                        Modifier.width(48.dp)
-                            .height(48.dp)
-                            .border(2.dp, Cinnabar, sealShape),
+                    modifier = Modifier.width(46.dp).height(46.dp).border(2.dp, Cinnabar, sealShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = "诗境", fontSize = 12.sp, color = Cinnabar, lineHeight = 14.sp)
                 }
+                Spacer(modifier = Modifier.weight(1f))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    SealButton("注释") { nav.openWindowContainer("notes", "lushan", Bundle()) }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    SealButton("赏析") { nav.openWindowContainer("commentary", "lushan", Bundle()) }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    SealButton("入诗") {
+                        scope.launch { nav.openStage(id = "lushan", style = StageStyle.Full) }
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.width(36.dp))
+            // ── 分隔线 ──
+            Box(
+                modifier =
+                    Modifier.padding(horizontal = 22.dp)
+                        .width(1.dp)
+                        .fillMaxHeight()
+                        .background(Color(0x2E1C1B19))
+            )
 
-            // 右：正文 + 印章按钮
-            Column(modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.height(6.dp))
+            // ── 中：正文 ──
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
                 poem.lines.forEach { line ->
                     Text(
                         text = line.text,
-                        fontSize = 22.sp,
-                        lineHeight = 40.sp,
+                        fontSize = 24.sp,
+                        lineHeight = 46.sp,
                         color = Ink,
-                        letterSpacing = 4.sp
+                        letterSpacing = 5.sp
                     )
                 }
+            }
+
+            // ── 右：注释与赏析 ──
+            Column(modifier = Modifier.width(330.dp).fillMaxHeight()) {
+                Text(text = "注", fontSize = 13.sp, color = Cinnabar, letterSpacing = 3.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                poem.lines.forEachIndexed { index, line ->
+                    Text(
+                        text = "${index + 1}. ${line.note}",
+                        fontSize = 13.sp,
+                        lineHeight = 21.sp,
+                        color = InkSoft
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(text = "赏", fontSize = 13.sp, color = Cinnabar, letterSpacing = 3.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = poem.commentary, fontSize = 13.sp, lineHeight = 22.sp, color = InkSoft)
                 Spacer(modifier = Modifier.weight(1f))
-                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    SealButton("注释") { nav.openWindowContainer("notes", "lushan", Bundle()) }
-                    SealButton("赏析") { nav.openWindowContainer("commentary", "lushan", Bundle()) }
-                    SealButton("入诗") {
-                        scope.launch { nav.openStage(id = "lushan", style = StageStyle.Full) }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    poem.images.forEach { tag ->
+                        Box(
+                            modifier =
+                                Modifier.width(46.dp)
+                                    .height(24.dp)
+                                    .background(Color(0x1FA8322D), sealShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = tag, fontSize = 11.sp, color = Cinnabar, letterSpacing = 2.sp)
+                        }
                     }
                 }
             }

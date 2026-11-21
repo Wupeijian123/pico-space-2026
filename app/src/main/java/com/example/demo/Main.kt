@@ -8,7 +8,6 @@ import com.pico.spatial.ui.design.PicoTheme
 import com.pico.spatial.ui.foundation.dsl.DefaultWindowContainer
 import com.pico.spatial.ui.foundation.dsl.Form
 import com.pico.spatial.ui.foundation.dsl.Immersion
-import com.pico.spatial.ui.foundation.dsl.Placement
 import com.pico.spatial.ui.foundation.dsl.SpatialAppScope
 import com.pico.spatial.ui.foundation.dsl.Stage
 import com.pico.spatial.ui.foundation.dsl.WindowContainer
@@ -32,11 +31,7 @@ fun mainApp(scope: SpatialAppScope) =
             defaultSize = WindowContainerSize(width = 720.dp, height = 640.dp),
             form = Form.Planar,
             worldScale = WorldScale.Fixed,
-            enableMaterialBackground = false,
-            placement = {
-                val main = containers.firstOrNull { it.id != "notes" && it.id != "commentary" }
-                if (main != null) Placement.right(main, 760.dp) else Placement.none()
-            }
+            enableMaterialBackground = false
         ) {
             PicoTheme { NotesPage() }
         }
@@ -48,11 +43,7 @@ fun mainApp(scope: SpatialAppScope) =
             defaultSize = WindowContainerSize(width = 720.dp, height = 640.dp),
             form = Form.Planar,
             worldScale = WorldScale.Fixed,
-            enableMaterialBackground = false,
-            placement = {
-                val main = containers.firstOrNull { it.id != "notes" && it.id != "commentary" }
-                if (main != null) Placement.left(main, 760.dp) else Placement.none()
-            }
+            enableMaterialBackground = false
         ) {
             PicoTheme { CommentaryPage() }
         }
