@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +22,7 @@ import com.pico.spatial.ui.design.Text
 @Composable
 fun NotesPage() {
     val poem = lushanPoem
-    Box(modifier = Modifier.fillMaxSize().background(Paper)) {
+    Box(modifier = Modifier.size(720.dp, 640.dp).background(Paper)) {
         Column(modifier = Modifier.fillMaxSize().padding(28.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "注释", fontSize = 22.sp, color = Ink, letterSpacing = 4.sp)
@@ -44,7 +45,7 @@ fun NotesPage() {
 @Composable
 fun CommentaryPage() {
     val poem = lushanPoem
-    Box(modifier = Modifier.fillMaxSize().background(Paper)) {
+    Box(modifier = Modifier.size(720.dp, 640.dp).background(Paper)) {
         Column(modifier = Modifier.fillMaxSize().padding(28.dp)) {
             Text(text = "赏析", fontSize = 22.sp, color = Ink, letterSpacing = 4.sp)
             Spacer(modifier = Modifier.height(16.dp))

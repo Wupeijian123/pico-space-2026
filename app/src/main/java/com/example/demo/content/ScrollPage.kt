@@ -70,18 +70,18 @@ fun ScrollPage() {
                 modifier = Modifier.width(200.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = poem.title, fontSize = 34.sp, color = Ink, letterSpacing = 4.sp)
-                Spacer(modifier = Modifier.height(14.dp))
-                Text(text = "${poem.dynasty} · ${poem.author}", fontSize = 16.sp, color = InkFaint, letterSpacing = 2.sp)
-                Spacer(modifier = Modifier.height(28.dp))
+                Text(text = poem.title, fontSize = 26.sp, color = Ink, letterSpacing = 3.sp)
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(text = "${poem.dynasty} · ${poem.author}", fontSize = 14.sp, color = InkFaint, letterSpacing = 2.sp)
+                Spacer(modifier = Modifier.height(22.dp))
                 Box(
                     modifier =
-                        Modifier.width(56.dp)
-                            .height(56.dp)
+                        Modifier.width(48.dp)
+                            .height(48.dp)
                             .border(2.dp, Cinnabar, sealShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = "诗境", fontSize = 13.sp, color = Cinnabar, lineHeight = 16.sp)
+                    Text(text = "诗境", fontSize = 12.sp, color = Cinnabar, lineHeight = 14.sp)
                 }
             }
 
@@ -93,10 +93,10 @@ fun ScrollPage() {
                 poem.lines.forEach { line ->
                     Text(
                         text = line.text,
-                        fontSize = 30.sp,
-                        lineHeight = 56.sp,
+                        fontSize = 22.sp,
+                        lineHeight = 40.sp,
                         color = Ink,
-                        letterSpacing = 6.sp
+                        letterSpacing = 4.sp
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
