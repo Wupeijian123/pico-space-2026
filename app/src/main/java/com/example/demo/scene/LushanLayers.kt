@@ -100,13 +100,10 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
     content.addEntity(root)
 
     // 远景：11 米外，画幅 12×7.5 米
-    addLayerTo(root, "scene/far.png", 12f, 7.5f, 0f, 1.9f, -11f)
-    // 中景：主峰与主瀑布，8 米外
-    addLayerTo(root, "scene/mid.png", 9.2f, 5.75f, 0f, 1.75f, -8f)
-    // 水雾：瀑布脚下
-    addLayerTo(root, "scene/mist.png", 4.4f, 2.75f, 0f, 1.05f, -6.6f, opacity = 0.9f)
-    // 近景：崖台与松树，压住画面下缘
-    addLayerTo(root, "scene/near.png", 7.6f, 4.75f, 0f, 1.05f, -5.5f)
+    // 天幕：把原图顶部拉伸出的大气层，铺满画幅之外
+    addLayerTo(root, "scene/skyfill.jpg", 40f, 22.5f, 0f, 3.2f, -13f)
+    // 主稿：用户自己用豆包生成的青绿山水原图
+    addLayerTo(root, "scene/base.jpg", 17.8f, 10.0f, 0f, 2.2f, -6.2f)
 }
 
 
