@@ -60,6 +60,12 @@ fun ScrollPage() {
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val poem = lushanPoem
 
+    // 临时验证：启动后自动进入入画态，确认 Stage 内 3D 是否渲染
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(1200)
+        nav.openStage(id = "lushan", style = StageStyle.Full)
+    }
+
     Box(modifier = Modifier.fillMaxSize().background(Paper)) {
         Row(modifier = Modifier.fillMaxSize().padding(horizontal = 34.dp, vertical = 28.dp)) {
 

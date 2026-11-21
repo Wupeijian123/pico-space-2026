@@ -43,7 +43,9 @@ private class PlaneFactory {
                 PhysicallyBasedMaterial.create(
                     if (alpha < 1f) BlendingMode.TRANSPARENT else BlendingMode.OPAQUE
                 ).apply {
-                    setBaseColor(c(hex, alpha))
+                    setBaseColor(c(hex, alpha * 0.35f))
+                    // 自发光：让青绿山水不依赖场景光照也能出颜色（平面场景用不到 PBR 光照）
+                    setEmissiveColor(c(hex, alpha))
                     setOpacity(alpha)
                     setRoughness(1f)
                 }
@@ -65,7 +67,7 @@ private fun Entity.place(x: Float, y: Float, z: Float, pitch: Float = 0f, yaw: F
 /** 入画态：晨光下的庐山瀑布（静态一帧）。scale 用于把 30 米宽的场景塞进窗口 */
 fun buildLushanMorning(
     content: com.pico.spatial.core.container.SpatialViewContent,
-    scale: Float = 1f
+    scale: Float = 0.12f
 ) {
     val f = PlaneFactory()
     val root = Entity()
@@ -112,11 +114,14 @@ fun buildLushanMorning(
     root.addChild(f.plane(1.2f, 7f, 0x1B1F1D).apply { place(-4.2f, 0.5f, -6f) })
     root.addChild(f.plane(1.2f, 7.5f, 0x1B1F1D).apply { place(4.2f, 0.8f, -6f) })
 
-    if (scale != 1f) {
-        root.components.set(
-            TransformComponent(Vector3.ZERO, EulerAngles(0f, 0f, 0f), Vector3(scale, scale, scale))
+    // 把整幅山水收成一幅悬在空中的画：缩到 0.12 倍，放到眼前 4 米、高 1.4 米处
+    root.components.set(
+        TransformComponent(
+            Vector3(0f, 1.4f, -4f),
+            EulerAngles(0f, 0f, 0f),
+            Vector3(scale, scale, scale)
         )
-    }
+    )
     content.addEntity(root)
 
     // 调试标记：一个红色方块，用来确认相机方向与可见性（确认后可删）
