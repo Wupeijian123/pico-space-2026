@@ -110,28 +110,3 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
     // 四段光照的色罩，叠在最前面
     attachLightVeil(root)
 }
-
-
-/** 入画态入口：Stage 里放一个 SpatialView */
-@androidx.compose.runtime.Composable
-fun LushanImmersion() {
-    PicoTheme {
-        AutoLightCycle()
-        SpatialView(
-            initial = { content, _ ->
-                buildLushanMorning(content)
-            }
-        )
-    }
-}
-
-/** 演示用：每 7 秒推进一个光段（后面接诗句进度时改这里） */
-@androidx.compose.runtime.Composable
-private fun AutoLightCycle() {
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(7000)
-            setLightPhase(LightPhase.of(currentPhase.ordinal + 1))
-        }
-    }
-}

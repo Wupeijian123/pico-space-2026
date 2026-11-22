@@ -92,8 +92,11 @@ fun ScrollPage() {
                     Spacer(modifier = Modifier.height(10.dp))
                     SealButton("赏析") { nav.openWindowContainer("commentary", "lushan", Bundle()) }
                     Spacer(modifier = Modifier.height(10.dp))
-                    SealButton("入诗") {
-                        scope.launch { nav.openStage(id = "lushan", style = StageStyle.Full) }
+                    // 同一枚印章：书房态是「入诗」，入画态变成「出画」
+                    if (com.example.demo.AppState.inStage) {
+                        SealButton("出画") { com.example.demo.AppState.inStage = false }
+                    } else {
+                        SealButton("入诗") { com.example.demo.AppState.inStage = true }
                     }
                 }
             }

@@ -48,11 +48,13 @@ fun mainApp(scope: SpatialAppScope) =
             PicoTheme { CommentaryPage() }
         }
 
-        // 入画态：望庐山瀑布（第一帧，晨光）
-        Stage(
-            id = "lushan",
-            immersion = Immersion(default = 100, min = 0, max = 100)
-        ) {
-            LushanImmersion()
+        // 入画态：只在用户点「入诗」后才创建，出画时销毁
+        if (AppState.inStage) {
+            Stage(
+                id = "lushan",
+                immersion = Immersion(default = 100, min = 0, max = 100)
+            ) {
+                LushanImmersion()
+            }
         }
     }
