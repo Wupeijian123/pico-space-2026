@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,12 +61,7 @@ fun ScrollPage() {
     val nav = LocalSpatialNavigator.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val poem = lushanPoem
-
-    // 临时验证：启动后自动进入入画态（先收起主窗，避免挡住场景）
-    androidx.compose.runtime.LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(1200)
-        nav.openStage(id = "lushan", style = StageStyle.Full)
-    }
+    var selected by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize().background(Paper)) {
         Row(modifier = Modifier.fillMaxSize().padding(horizontal = 34.dp, vertical = 28.dp)) {
@@ -115,14 +112,29 @@ fun ScrollPage() {
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 verticalArrangement = Arrangement.Center
             ) {
-                poem.lines.forEach { line ->
-                    Text(
-                        text = line.text,
-                        fontSize = 24.sp,
-                        lineHeight = 46.sp,
-                        color = Ink,
-                        letterSpacing = 5.sp
-                    )
+                poem.lines.forEachIndexed { index, line ->
+                    val active = index == selected
+                    Row(
+                        modifier = Modifier
+                            .clickable { selected = index }
+                            .padding(vertical = 2.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .width(4.dp)
+                                .height(34.dp)
+                                .background(if (active) Cinnabar else Color(0x00000000))
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = line.text,
+                            fontSize = if (active) 25.sp else 24.sp,
+                            lineHeight = 46.sp,
+                            color = if (active) Cinnabar else Ink,
+                            letterSpacing = 5.sp
+                        )
+                    }
                 }
             }
 
@@ -131,13 +143,14 @@ fun ScrollPage() {
                 Text(text = "注", fontSize = 13.sp, color = Cinnabar, letterSpacing = 3.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 poem.lines.forEachIndexed { index, line ->
+                    val active = index == selected
                     Text(
                         text = "${index + 1}. ${line.note}",
-                        fontSize = 13.sp,
+                        fontSize = if (active) 14.sp else 12.sp,
                         lineHeight = 21.sp,
-                        color = InkSoft
+                        color = if (active) Ink else InkFaint
                     )
-                    Spacer(modifier = Modifier.height(5.dp))
+                    Spacer(modifier = Modifier.height(if (active) 8.dp else 4.dp))
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(text = "赏", fontSize = 13.sp, color = Cinnabar, letterSpacing = 3.sp)
