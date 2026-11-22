@@ -12,5 +12,5 @@ import androidx.compose.runtime.setValue
  * 出画时置回 false，Stage 连同其中的场景一起销毁。
  */
 object AppState {
-    var inStage by mutableStateOf(false)
+    var inStage by mutableStateOf(true)
 }

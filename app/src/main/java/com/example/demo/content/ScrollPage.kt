@@ -61,6 +61,16 @@ fun ScrollPage() {
     val nav = LocalSpatialNavigator.current
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val poem = lushanPoem
+
+    // 入画态的开/关：Stage 只声明不会显示，必须显式 openStage / closeStage
+    androidx.compose.runtime.LaunchedEffect(com.example.demo.AppState.inStage) {
+        if (com.example.demo.AppState.inStage) {
+            nav.openStage(id = "lushan", style = StageStyle.Full)
+        } else {
+            runCatching { nav.closeStage() }
+        }
+    }
+
     var selected by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize().background(Paper)) {
