@@ -100,67 +100,38 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
     content.addEntity(root)
 
     // 远景：11 米外，画幅 12×7.5 米
-    // 天幕：把原图顶部拉伸出的大气层，铺满画幅之外
-    addLayerTo(root, "scene/skyfill.jpg", 40f, 22.5f, 0f, 3.2f, -13f)
-    // 主稿：用户自己用豆包生成的青绿山水原图
-    addLayerTo(root, "scene/base.jpg", 17.8f, 10.0f, 0f, 2.2f, -6.2f)
+    // 天幕：原图顶部拉伸出的大气层，铺满画幅之外
+    addLayerTo(root, "scene/skyfill.jpg", 44f, 24.75f, 0f, 3.4f, -15f)
+    // 远景：整幅原图（轻模糊），10 米外
+    addLayerTo(root, "scene/bg.jpg", 20f, 11.25f, 0f, 2.2f, -10f)
+    // 前景：松树与崖台，6.2 米外；画幅按 6.2/10 等比缩小，保证与远景严格对齐
+    addLayerTo(root, "scene/fore.png", 12.4f, 6.98f, 0f, 1.97f, -6.2f)
+
+    // 四段光照的色罩，叠在最前面
+    attachLightVeil(root)
 }
 
-
-/** 诊断用：四种材质各放一块 1 米见方的板，看哪一种能显示 */
-suspend fun buildTestQuads(content: SpatialViewContent) {
-    val root = Entity()
-    root.components.set(TransformComponent(Vector3.ZERO, EulerAngles(0f, 0f, 0f), Vector3.ONE))
-    content.addEntity(root)
-
-    // A 对照：纯自发光红色
-    val matA = PhysicallyBasedMaterial.create(BlendingMode.OPAQUE).apply {
-        setBaseColor(Color4(1f, 0f, 0f, 1f)); setEmissiveColor(Color4(1f, 0f, 0f, 1f)); setRoughness(1f)
-    }
-    // B：贴图 + 不透明
-    val matB = TextureResource.load(path = "scene/mid.png", loadType = LoadType.FROM_ASSETS).use { t ->
-        PhysicallyBasedMaterial.create(BlendingMode.OPAQUE).apply {
-            setBaseColor(Color4(1f, 1f, 1f, 1f)); setBaseColorTexture(t); setRoughness(1f)
-        }
-    }
-    // C：贴图 + 自发光贴图 + 不透明
-    val matC = TextureResource.load(path = "scene/mid.png", loadType = LoadType.FROM_ASSETS).use { t ->
-        PhysicallyBasedMaterial.create(BlendingMode.OPAQUE).apply {
-            setBaseColor(Color4(1f, 1f, 1f, 1f)); setBaseColorTexture(t)
-            setEmissiveColor(WHITE); setEmissiveTexture(t); setRoughness(1f)
-        }
-    }
-    // D：贴图 + 自发光贴图 + 透明混合
-    val matD = TextureResource.load(path = "scene/mid.png", loadType = LoadType.FROM_ASSETS).use { t ->
-        PhysicallyBasedMaterial.create(BlendingMode.TRANSPARENT).apply {
-            setBaseColor(Color4(1f, 1f, 1f, 1f)); setBaseColorTexture(t)
-            setEmissiveColor(WHITE); setEmissiveTexture(t); setRoughness(1f)
-        }
-    }
-
-    listOf(matA, matB, matC, matD).forEachIndexed { i, m ->
-        val e = Entity().apply {
-            components.set(ModelComponent(MeshResource.createPlane(1f, 1f, 0f), m))
-            components.set(
-                TransformComponent(
-                    Vector3(-1.5f + i * 1.0f, 1.5f, -3f),
-                    EulerAngles(0f, 0f, 0f),
-                    Vector3.ONE
-                )
-            )
-        }
-        root.addChild(e)
-    }
-}
 
 /** 入画态入口：Stage 里放一个 SpatialView */
 @androidx.compose.runtime.Composable
 fun LushanImmersion() {
     PicoTheme {
+        AutoLightCycle()
         SpatialView(
             initial = { content, _ ->
                 buildLushanMorning(content)
             }
         )
+    }
+}
+
+/** 演示用：每 7 秒推进一个光段（后面接诗句进度时改这里） */
+@androidx.compose.runtime.Composable
+private fun AutoLightCycle() {
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(7000)
+            setLightPhase(LightPhase.of(currentPhase.ordinal + 1))
+        }
     }
 }
