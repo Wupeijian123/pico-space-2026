@@ -25,7 +25,7 @@ fun LushanImmersion() {
 
     // 兜底出画：看满 30 秒自动回卷轴，避免卡在山水里出不来
     androidx.compose.runtime.LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(30_000)
+        kotlinx.coroutines.delay(40_000)
         com.example.demo.AppState.inStage = false
     }
 

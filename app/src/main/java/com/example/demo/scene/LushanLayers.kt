@@ -107,7 +107,7 @@ suspend fun buildLushanMorning(content: SpatialViewContent, context: android.con
 
     // 天幕共用一份（原图顶部拉伸模糊），不分光段
     addLayerTo(root, "scene/skyfill.jpg", 44f, 24.75f, 0f, 3.4f, -15f)
-    val terrainOnly = true
+    val terrainOnly = false
 
     // 真 3D 地形：自建网格（glTF 自带 PBR 材质在无光 Stage 里会全黑，故不用 Entity.load）
     buildTerrain(
