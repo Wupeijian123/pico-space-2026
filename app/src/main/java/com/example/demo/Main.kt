@@ -18,8 +18,8 @@ import com.example.demo.scene.LushanImmersion
 
 fun mainApp(scope: SpatialAppScope) =
     with(scope) {
-        // 入画态不创建卷轴窗：窗口贴近相机，会把整幅山水挡住
-        if (!AppState.inStage) {
+        // 默认窗口必须无条件在 DSL 里声明：条件声明会导致启动崩溃
+        // "Only support [SUIStage,SUIWindowContainer] ... you also need to register them in the DSL"
         DefaultWindowContainer {
             PicoTheme {
                 ScrollPage()
@@ -49,8 +49,6 @@ fun mainApp(scope: SpatialAppScope) =
         ) {
             PicoTheme { CommentaryPage() }
         }
-
-        } // end 书房态
 
         // 入画态：只在用户点「入诗」后才创建，出画时销毁
         if (AppState.inStage) {
