@@ -13,4 +13,7 @@ import androidx.compose.runtime.setValue
  */
 object AppState {
     var inStage by mutableStateOf(true)
+
+    /** 当前读到第几句（0~3），入画态据此决定从哪一段光开始 */
+    var lineIndex by mutableStateOf(0)
 }

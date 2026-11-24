@@ -30,7 +30,7 @@ fun LushanImmersion() {
     }
 
     PicoTheme {
-        AutoLightCycle()
+        AutoLightCycle(startIndex = com.example.demo.AppState.lineIndex)
         SpatialView(
             initial = { content, _ ->
                 buildLushanMorning(content)
@@ -41,11 +41,15 @@ fun LushanImmersion() {
 
 /** 演示用：每 7 秒推进一个光段（后面接诗句进度时改这里） */
 @Composable
-private fun AutoLightCycle() {
-    androidx.compose.runtime.LaunchedEffect(Unit) {
+private fun AutoLightCycle(startIndex: Int) {
+    androidx.compose.runtime.LaunchedEffect(startIndex) {
+        val begin = LightPhase.of(startIndex)
+        applyLightPhase(begin)
+        var i = begin.ordinal
         while (true) {
             kotlinx.coroutines.delay(7000)
-            applyLightPhase(LightPhase.of(currentPhase.ordinal + 1))
+            i += 1
+            applyLightPhase(LightPhase.of(i))
         }
     }
 }

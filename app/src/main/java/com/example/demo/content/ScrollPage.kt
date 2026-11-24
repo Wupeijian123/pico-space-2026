@@ -129,7 +129,10 @@ fun ScrollPage() {
                     val active = index == selected
                     Row(
                         modifier = Modifier
-                            .clickable { selected = index }
+                            .clickable {
+                                selected = index
+                                com.example.demo.AppState.lineIndex = index
+                            }
                             .padding(vertical = 2.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
