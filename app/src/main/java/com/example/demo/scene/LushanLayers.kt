@@ -57,7 +57,7 @@ private fun uvQuad(width: Float, height: Float): MeshResource {
 
 
 /** 贴图必须保活，否则被回收后材质变白 */
-private val retainedTextures = mutableListOf<TextureResource>()
+internal val retainedTextures = mutableListOf<TextureResource>()
 
 /** 四组光段实体，索引与 LightPhase.ordinal 对齐 */
 private val phaseGroups = mutableListOf<Entity>()
@@ -97,7 +97,7 @@ private suspend fun addLayerTo(
     root.addChild(layer)
 }
 
-suspend fun buildLushanMorning(content: SpatialViewContent) {
+suspend fun buildLushanMorning(content: SpatialViewContent, context: android.content.Context) {
     val root = Entity()
     // 根实体必须有 TransformComponent，否则子实体的变换链无效、整层不渲染
     root.components.set(
@@ -107,6 +107,16 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
 
     // 天幕共用一份（原图顶部拉伸模糊），不分光段
     addLayerTo(root, "scene/skyfill.jpg", 44f, 24.75f, 0f, 3.4f, -15f)
+    val terrainOnly = true
+
+    // 真 3D 地形：自建网格（glTF 自带 PBR 材质在无光 Stage 里会全黑，故不用 Entity.load）
+    buildTerrain(
+        parent = root,
+        context = context,
+        heightmapAsset = "scene/heightmap.png",
+        textureAsset = "scene/bg.jpg"
+    )
+
 
     // 每个光段一组实体：远景（10 米）+ 前景（6.2 米，等比缩放保证对齐）
     phaseGroups.clear()
@@ -122,8 +132,8 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
         }
         root.addChild(g)
         phaseGroups.add(g)
-        addLayerTo(g, "scene_baked/bg_${phase.asset}.jpg", 20f, 11.25f, 0f, 2.2f, -10f)
-        addLayerTo(g, "scene_baked/fore_${phase.asset}.png", 12.4f, 6.98f, 0f, 1.97f, -6.2f)
+        if (!terrainOnly) addLayerTo(g, "scene_baked/bg_${phase.asset}.jpg", 20f, 11.25f, 0f, 2.2f, -10f)
+        if (!terrainOnly) addLayerTo(g, "scene_baked/fore_${phase.asset}.png", 12.4f, 6.98f, 0f, 1.97f, -6.2f)
         // 诗句竖幅：叠在画面右侧，随光段换句
         addLayerTo(g, "scene_verse/verse_$index.png", 1.55f, 3.49f, 4.9f, 2.6f, -5.6f)
     }

@@ -31,9 +31,10 @@ fun LushanImmersion() {
 
     PicoTheme {
         AutoLightCycle(startIndex = com.example.demo.AppState.lineIndex)
+        val ctx = androidx.compose.ui.platform.LocalContext.current
         SpatialView(
             initial = { content, _ ->
-                buildLushanMorning(content)
+                buildLushanMorning(content, ctx)
             }
         )
     }
