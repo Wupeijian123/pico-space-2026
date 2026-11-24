@@ -124,6 +124,8 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
         phaseGroups.add(g)
         addLayerTo(g, "scene_baked/bg_${phase.asset}.jpg", 20f, 11.25f, 0f, 2.2f, -10f)
         addLayerTo(g, "scene_baked/fore_${phase.asset}.png", 12.4f, 6.98f, 0f, 1.97f, -6.2f)
+        // 诗句竖幅：叠在画面右侧，随光段换句
+        addLayerTo(g, "scene_verse/verse_$index.png", 1.55f, 3.49f, 4.9f, 2.6f, -5.6f)
     }
     currentPhase = LightPhase.MORNING
 
