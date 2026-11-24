@@ -23,6 +23,12 @@ fun LushanImmersion() {
         com.example.demo.AppState.inStage = false
     }
 
+    // 兜底出画：看满 30 秒自动回卷轴，避免卡在山水里出不来
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(30_000)
+        com.example.demo.AppState.inStage = false
+    }
+
     PicoTheme {
         AutoLightCycle()
         SpatialView(
