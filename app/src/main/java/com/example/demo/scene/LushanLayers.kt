@@ -59,6 +59,12 @@ private fun uvQuad(width: Float, height: Float): MeshResource {
 /** 贴图必须保活，否则被回收后材质变白 */
 private val retainedTextures = mutableListOf<TextureResource>()
 
+/** 四组光段实体，索引与 LightPhase.ordinal 对齐 */
+private val phaseGroups = mutableListOf<Entity>()
+
+/** 隐藏时挪到相机背后的距离 */
+private const val HIDDEN_Z = 800f
+
 private suspend fun addLayerTo(
     root: Entity,
     asset: String,
@@ -99,14 +105,38 @@ suspend fun buildLushanMorning(content: SpatialViewContent) {
     )
     content.addEntity(root)
 
-    // 远景：11 米外，画幅 12×7.5 米
-    // 天幕：原图顶部拉伸出的大气层，铺满画幅之外
+    // 天幕共用一份（原图顶部拉伸模糊），不分光段
     addLayerTo(root, "scene/skyfill.jpg", 44f, 24.75f, 0f, 3.4f, -15f)
-    // 远景：整幅原图（轻模糊），10 米外
-    addLayerTo(root, "scene/bg.jpg", 20f, 11.25f, 0f, 2.2f, -10f)
-    // 前景：松树与崖台，6.2 米外；画幅按 6.2/10 等比缩小，保证与远景严格对齐
-    addLayerTo(root, "scene/fore.png", 12.4f, 6.98f, 0f, 1.97f, -6.2f)
 
-    // 四段光照的色罩，叠在最前面
-    attachLightVeil(root)
+    // 每个光段一组实体：远景（10 米）+ 前景（6.2 米，等比缩放保证对齐）
+    phaseGroups.clear()
+    LightPhase.entries.forEachIndexed { index, phase ->
+        val g = Entity().apply {
+            components.set(
+                TransformComponent(
+                    Vector3(0f, 0f, if (index == 0) 0f else HIDDEN_Z),
+                    EulerAngles(0f, 0f, 0f),
+                    Vector3.ONE
+                )
+            )
+        }
+        root.addChild(g)
+        phaseGroups.add(g)
+        addLayerTo(g, "scene_baked/bg_${phase.asset}.jpg", 20f, 11.25f, 0f, 2.2f, -10f)
+        addLayerTo(g, "scene_baked/fore_${phase.asset}.png", 12.4f, 6.98f, 0f, 1.97f, -6.2f)
+    }
+    currentPhase = LightPhase.MORNING
+
+}
+
+/** 切换光段：只移动实体（挪到相机背后即等于隐藏），不碰材质 */
+fun applyLightPhase(phase: LightPhase) {
+    currentPhase = phase
+    phaseGroups.forEachIndexed { index, g ->
+        val z = if (index == phase.ordinal) 0f else HIDDEN_Z
+        g.components.set(
+            TransformComponent(Vector3(0f, 0f, z), EulerAngles(0f, 0f, 0f), Vector3.ONE)
+        )
+    }
+    println("LIGHT_PHASE -> ${phase.label} (${phase.asset})")
 }

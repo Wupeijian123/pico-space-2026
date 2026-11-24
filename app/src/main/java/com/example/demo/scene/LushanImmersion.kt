@@ -45,7 +45,7 @@ private fun AutoLightCycle() {
     androidx.compose.runtime.LaunchedEffect(Unit) {
         while (true) {
             kotlinx.coroutines.delay(7000)
-            setLightPhase(LightPhase.of(currentPhase.ordinal + 1))
+            applyLightPhase(LightPhase.of(currentPhase.ordinal + 1))
         }
     }
 }
