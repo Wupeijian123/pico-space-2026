@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
  * 出画时置回 false，Stage 连同其中的场景一起销毁。
  */
 object AppState {
-    var inStage by mutableStateOf(false)
+    var inStage by mutableStateOf(true)
 
     /** 当前读到第几句（0~3），入画态据此决定从哪一段光开始 */
     var lineIndex by mutableStateOf(0)

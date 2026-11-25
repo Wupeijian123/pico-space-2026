@@ -107,18 +107,30 @@ suspend fun buildLushanMorning(content: SpatialViewContent, context: android.con
 
     // 天幕共用一份（原图顶部拉伸模糊），不分光段
     addLayerTo(root, "scene/skyfill.jpg", 44f, 24.75f, 0f, 3.4f, -15f)
-    val terrainOnly = false
 
-    // 真 3D 地形：自建网格（glTF 自带 PBR 材质在无光 Stage 里会全黑，故不用 Entity.load）
-    buildTerrain(
+    // 真光源：环境光 + 太阳。GLB 的 PBR 材质必须有光，否则全黑
+    addStageLights(root)
+
+    // 优先用外部 GLB 模型（Tripo 等 AI 生成的模型放到 scene/tripo/scene.glb 即自动接管）
+    val tripoOk = loadGlbModel(
         parent = root,
-        context = context,
-        heightmapAsset = "scene/heightmap.png",
-        textureAsset = "scene/bg.jpg"
+        assetPath = "scene/tripo/scene.glb",
+        scale = 1f,
+        position = Vector3(0f, 0f, 0f)
     )
+    // 本地兜底：从原图明暗估深度自建的起伏地形
+    val terrainOk = tripoOk || runCatching {
+        buildTerrain(
+            parent = root,
+            context = context,
+            heightmapAsset = "scene/heightmap.png",
+            textureAsset = "scene/bg.jpg"
+        )
+        true
+    }.getOrDefault(false)
+    println("SCENE_SOURCE tripo=$tripoOk terrain=$terrainOk")
+    val terrainOnly = tripoOk || terrainOk
 
-
-    // 每个光段一组实体：远景（10 米）+ 前景（6.2 米，等比缩放保证对齐）
     phaseGroups.clear()
     LightPhase.entries.forEachIndexed { index, phase ->
         val g = Entity().apply {
