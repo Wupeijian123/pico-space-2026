@@ -120,11 +120,15 @@ suspend fun buildLushanMorning(content: SpatialViewContent, context: android.con
     )
     // 本地兜底：从原图明暗估深度自建的起伏地形
     val terrainOk = tripoOk || runCatching {
-        buildTerrain(
+        buildPanorama(
             parent = root,
             context = context,
             heightmapAsset = "scene/heightmap.png",
-            textureAsset = "scene/bg.jpg"
+            textureAsset = "scene/bg.jpg",
+            arcDegrees = 200f,
+            radius = 11f,
+            baseHeight = 2.1f,
+            reliefHeight = 5.5f
         )
         true
     }.getOrDefault(false)
